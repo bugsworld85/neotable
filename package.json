@@ -16,14 +16,8 @@
         "vue": "^2.6.11"
     },
     "devDependencies": {
-        "vue-template-compiler": "^2.6.11",
-        "webpack": "^4.46.0"
+        "vue-template-compiler": "^2.6.11"
     },
-    "browserslist": [
-        "> 1%",
-        "last 2 versions",
-        "not dead"
-    ],
     "config": {
         "resolve": {
             "alias": {
