@@ -6,7 +6,7 @@
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
-        "build-dev": "vue-cli-service build --target lib --name neo-table ./src/install.js"
+        "build-dist": "vue-cli-service build --target lib --name neo-table ./src/index.js"
     },
     "dependencies": {
         "bootstrap": "^4.6.0",
@@ -53,5 +53,10 @@
                 "vue$": "vue/dist/vue.esm.js"
             }
         }
-    }
+    },
+    "license": "MIT",
+    "main": "./src/index.js",
+    "files": [
+        "dist/*"
+    ]
 }

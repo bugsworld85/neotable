@@ -1,5 +1,5 @@
 <template>
-    <div id="neo-table">
+    <div class="neo-table">
         <div class="table-filter">
             <div class="row">
                 <div class="col-md-6 flex middle">
@@ -80,11 +80,21 @@
                 </div>
             </div>
         </div>
-        <div class="table-container">
+        <div
+            class="table-container"
+            :style="{ maxHeight: maxHeight !== null ? maxHeight : 'initial' }"
+        >
             <table class="table">
-                <thead v-if="tableColumns.length > 0">
+                <thead v-if="tableColumns.length > 0" class="sticky">
                     <tr>
-                        <th v-if="multipleRows" width="10" class="checkboxes">
+                        <th
+                            v-if="multipleRows"
+                            width="10"
+                            class="checkboxes"
+                            :class="{
+                                freeze: freezeColumn === 0
+                            }"
+                        >
                             <div class="custom-control custom-checkbox">
                                 <input
                                     type="checkbox"
@@ -100,7 +110,7 @@
                             </div>
                         </th>
                         <th
-                            v-for="column in tableColumns"
+                            v-for="(column, a) in tableColumns"
                             :key="`column-${getKey(column)}`"
                             :width="getWidth(column)"
                             :style="{
@@ -109,7 +119,10 @@
                                     : 'left'
                             }"
                             :class="{
-                                'is-divider': getType(column) === 'divider'
+                                'is-divider': getType(column) === 'divider',
+                                freeze:
+                                    freezeColumn === a ||
+                                    (multipleRows && freezeColumn === a + 1)
                             }"
                         >
                             <button
@@ -150,9 +163,14 @@
                         </td>
                     </tr>
                 </tbody>
-                <tbody v-else-if="rows().length > 0">
+                <tbody v-else-if="rows().length > 0" class="sticky">
                     <tr v-for="(row, i) in rows()" :key="`row-${i}`">
-                        <td v-if="multipleRows">
+                        <td
+                            v-if="multipleRows"
+                            :class="{
+                                freeze: freezeColumn === 0
+                            }"
+                        >
                             <div class="custom-control custom-checkbox">
                                 <input
                                     type="checkbox"
@@ -168,7 +186,7 @@
                             </div>
                         </td>
                         <td
-                            v-for="column in tableColumns"
+                            v-for="(column, a) in tableColumns"
                             :key="`col-${getKey(column)}`"
                             :style="{
                                 textAlign: isset(column.textAlign)
@@ -176,7 +194,10 @@
                                     : 'left'
                             }"
                             :class="{
-                                'is-divider': getType(column) === 'divider'
+                                'is-divider': getType(column) === 'divider',
+                                freeze:
+                                    freezeColumn === a ||
+                                    (multipleRows && freezeColumn === a + 1)
                             }"
                         >
                             <input
@@ -305,7 +326,8 @@
                                                   row
                                               )
                                             : row[getKey(column)],
-                                        keyword
+                                        keyword,
+                                        $options._scopeId
                                     )
                                 "
                                 >{{
@@ -347,7 +369,9 @@
         <div class="table-footer">
             <div class="row">
                 <div class="col-md-4">
-                    <span class="nowrap ml-2" v-if="rows.length > 0 && !showAll"
+                    <span
+                        class="nowrap ml-2"
+                        v-if="rows().length > 0 && !showAll"
                         >{{ start }}-{{ end }} of {{ totalRows }}</span
                     >
                 </div>
@@ -473,7 +497,6 @@
  * @author Jovanni G <bugsworld85@gmail.com>
  *
  * Todos:
- * - replicate the methods from your helpers.js as part of this component's mixins.
  * - Add documentation on this component's props as Table Properties.
  *
  * Dependencies:
@@ -645,13 +668,13 @@ export default {
     name: "neo-table",
     mixins: [mixins],
     filters: {
-        highlight: function(words, query) {
+        highlight: (words, query, scopeId) => {
             var check = new RegExp(query, "ig");
             if (words === null) {
                 return words;
             }
             return words.toString().replace(check, function(matched) {
-                return `<span class="highlight">${matched}</span>`;
+                return `<span class="highlight" ${scopeId}>${matched}</span>`;
             });
         }
     },
@@ -741,6 +764,14 @@ export default {
         data: {
             type: Array,
             default: () => []
+        },
+        freezeColumn: {
+            type: Number,
+            default: 0
+        },
+        maxHeight: {
+            type: String,
+            default: null
         }
     },
     computed: {
@@ -1086,6 +1117,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.neo-table {
+    position: relative;
+}
+.table-container {
+    position: relative;
+    overflow: auto;
+    margin-bottom: 5px;
+    border: 1px solid #dee2e6;
+}
 .pagination {
     .page-item.disabled,
     .page-item.active {
@@ -1100,7 +1140,9 @@ export default {
 }
 
 .highlight {
-    background-color: yellow;
+    background-color: yellow !important;
+    padding: 0;
+    border-radius: 3px;
 }
 
 .fit-screen {
@@ -1126,7 +1168,6 @@ export default {
     width: 100%;
     margin-bottom: 1rem;
     border-collapse: collapse;
-    border: 1px solid #dee2e6;
     &.compact {
         tbody,
         thead {
@@ -1150,14 +1191,45 @@ export default {
         td,
         th {
             position: relative;
-            border-top: 1px solid #dee2e6;
             border-bottom: 2px solid #dee2e6;
-            .freeze {
-                position: absolute;
-                display: block;
-                width: 100%;
-                padding: 0;
+            // .freeze {
+            //     position: absolute;
+            //     display: block;
+            //     width: 100%;
+            //     padding: 0;
+            //     top: 0;
+            // }
+        }
+        &.sticky {
+            th,
+            td {
+                position: -webkit-sticky; /* for Safari */
+                position: sticky;
                 top: 0;
+                background-color: #f9f9f9;
+                z-index: 1;
+                border-top: none;
+            }
+            th.freeze {
+                left: 0;
+                z-index: 2;
+            }
+        }
+    }
+    tbody {
+        td,
+        th {
+            white-space: nowrap;
+        }
+        &.sticky {
+            th.freeze,
+            td.freeze {
+                position: -webkit-sticky; /* for Safari */
+                position: sticky;
+                left: 0;
+                background-color: inherit;
+                z-index: 1;
+                border-left: none;
             }
         }
     }
@@ -1188,6 +1260,11 @@ export default {
 
 .w-full {
     width: 100%;
+}
+
+.text-only {
+    word-break: break-all;
+    // white-space: nowrap;
 }
 
 table {
@@ -1231,8 +1308,11 @@ table {
             &:nth-child(even) {
                 background-color: #e9ecf3;
             }
+            &:nth-child(odd) {
+                background-color: white;
+            }
             &:hover {
-                background-color: rgba(88, 177, 204, 0.3);
+                background-color: #bae3ef;
             }
         }
         td {
@@ -1240,9 +1320,6 @@ table {
             vertical-align: middle;
             .btn {
                 color: #888;
-            }
-            &:first-child {
-                padding-left: 0.75rem;
             }
             span {
                 padding: 7px 5px;

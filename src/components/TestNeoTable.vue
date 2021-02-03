@@ -1,11 +1,14 @@
 <template>
     <div class="col-md-6">
         <neo-table
-            :showAll="false"
+            :showAll="true"
             :data="products"
             :columns="columns"
             :multipleRows="false"
-            :limit="10"
+            :limit="25"
+            maxHeight="600px"
+            :freezeColumn="2"
+            :enableSearch="false"
         ></neo-table>
     </div>
 </template>
@@ -14,7 +17,7 @@
 import NeoTable from "./NeoTable";
 
 export default {
-    name: "HelloWorld",
+    name: "TestNeoTable",
     props: {
         msg: String
     },
