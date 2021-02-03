@@ -1,6 +1,6 @@
 {
     "name": "neotable",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "private": false,
     "scripts": {
         "serve": "vue-cli-service serve",
@@ -31,7 +31,8 @@
         "dist/*",
         "src/index.js",
         "src/NeoTable.vue",
-        "src/components/Paginator.vue"
+        "src/components/*",
+        "src/lib/*"
     ],
     "repository": {
         "type": "git",
@@ -43,6 +44,7 @@
     ],
     "description": "Feature pack dynamic table.",
     "author": {
-        "name": "Jovanni G"
+        "name": "Jovanni G",
+        "email": "bugsworld85@gmail.com"
     }
 }
