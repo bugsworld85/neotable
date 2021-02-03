@@ -1,6 +1,6 @@
 {
     "name": "neotable",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "private": false,
     "scripts": {
         "serve": "vue-cli-service serve",
@@ -14,7 +14,9 @@
         "vue": "^2.6.12"
     },
     "devDependencies": {
-        "vue-template-compiler": "^2.6.12"
+        "vue-template-compiler": "^2.6.12",
+        "bootstrap": "^4.6.0",
+        "font-awesome": "^4.7.0"
     },
     "config": {
         "resolve": {
