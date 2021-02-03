@@ -1,5 +1,5 @@
 import NeoTable from "./NeoTable";
-import NeoPaginator from "./Paginator";
+import NeoPaginator from "./components/Paginator";
 
 export default {
     install(Vue) {
