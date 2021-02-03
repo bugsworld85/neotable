@@ -28,7 +28,9 @@
     "license": "MIT",
     "main": "./src/index.js",
     "files": [
-        "dist/*"
+        "dist/*",
+        "src/index.js",
+        "src/components/NeoTable.vue"
     ],
     "repository": {
         "type": "git",
