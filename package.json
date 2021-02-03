@@ -58,5 +58,17 @@
     "main": "./src/index.js",
     "files": [
         "dist/*"
-    ]
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/bugsworld85/neotable.git"
+    },
+    "keywords": [
+        "table",
+        "data-table"
+    ],
+    "description": "Feature pack dynamic table.",
+    "author": {
+        "name": "Jovanni G"
+    }
 }

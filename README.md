@@ -1,5 +1,7 @@
 # NeoTable
 
+Documentation to follow soon.
+
 ## Project setup
 
 ```
