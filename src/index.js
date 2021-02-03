@@ -1,9 +1,9 @@
-import NeoTable from "./components/NeoTable";
+import NeoTable from "./NeoTable";
 
 export default {
     install(Vue) {
         Vue.component("neo-table", NeoTable);
-    }
+    },
 };
 
 // if (typeof window !== "undefined" && window.Vue) {

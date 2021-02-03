@@ -57,8 +57,8 @@
                                     @click="handleSearchClick"
                                     v-if="
                                         isSearching &&
-                                            searchedKeywordModel !== null &&
-                                            searchedKeywordModel !== ''
+                                        searchedKeywordModel !== null &&
+                                        searchedKeywordModel !== ''
                                     "
                                 >
                                     <i class="fa fa-search fa-sm"></i>
@@ -69,7 +69,7 @@
                                     @click="handleClearSearch"
                                     v-if="
                                         searchedKeywordModel !== null &&
-                                            searchedKeywordModel !== ''
+                                        searchedKeywordModel !== ''
                                     "
                                 >
                                     <i class="fa fa-times fa-sm"></i>
@@ -92,7 +92,7 @@
                             width="10"
                             class="checkboxes"
                             :class="{
-                                freeze: freezeColumn === 0
+                                freeze: freezeColumn === 0,
                             }"
                         >
                             <div class="custom-control custom-checkbox">
@@ -116,13 +116,13 @@
                             :style="{
                                 textAlign: isset(column.textAlign)
                                     ? column.textAlign
-                                    : 'left'
+                                    : 'left',
                             }"
                             :class="{
                                 'is-divider': getType(column) === 'divider',
                                 freeze:
                                     freezeColumn === a ||
-                                    (multipleRows && freezeColumn === a + 1)
+                                    (multipleRows && freezeColumn === a + 1),
                             }"
                         >
                             <button
@@ -134,13 +134,13 @@
                                 <i
                                     class="fa fa-sort-up"
                                     v-if="
-                                        sortedColumn === getKey(column) && asc
+                                        currentColumn === getKey(column) && asc
                                     "
                                 ></i>
                                 <i
                                     class="fa fa-sort-down"
                                     v-else-if="
-                                        sortedColumn === getKey(column) && !asc
+                                        currentColumn === getKey(column) && !asc
                                     "
                                 ></i>
                                 <i class="fa fa-sort" v-else></i>
@@ -168,7 +168,7 @@
                         <td
                             v-if="multipleRows"
                             :class="{
-                                freeze: freezeColumn === 0
+                                freeze: freezeColumn === 0,
                             }"
                         >
                             <div class="custom-control custom-checkbox">
@@ -191,13 +191,13 @@
                             :style="{
                                 textAlign: isset(column.textAlign)
                                     ? column.textAlign
-                                    : 'left'
+                                    : 'left',
                             }"
                             :class="{
                                 'is-divider': getType(column) === 'divider',
                                 freeze:
                                     freezeColumn === a ||
-                                    (multipleRows && freezeColumn === a + 1)
+                                    (multipleRows && freezeColumn === a + 1),
                             }"
                         >
                             <input
@@ -440,7 +440,7 @@
                             <li
                                 class="page-item"
                                 :class="{
-                                    disabled: currentPage === totalPages
+                                    disabled: currentPage === totalPages,
                                 }"
                             >
                                 <a
@@ -463,7 +463,7 @@
                             <li
                                 class="page-item"
                                 :class="{
-                                    disabled: currentPage > totalPages - 3
+                                    disabled: currentPage > totalPages - 3,
                                 }"
                             >
                                 <a
@@ -492,89 +492,9 @@
 </template>
 
 <script>
-/**
- * NeoTable component:
- * @author Jovanni G <bugsworld85@gmail.com>
- *
- * Todos:
- * - Add documentation on this component's props as Table Properties.
- *
- * Dependencies:
- * - moment
- * - lodash
- *
- * Requirements:
- * - Route object from app.blade.php.
- *
- * Documentation: ======================================================
- *
- * Column Properties:
- * key - (required) Column key.
- * type - (optional) Determines the type of the column. Defaults to "string".
- *      options: ["string", "text", "number", "switch", "textarea", "checkbox", "actions", "template", "options"]
- * title - (optional) Title of the column. Blank if undefined.
- * width - (optional) Define width of the column.
- * sortable - (optional) Enables the column to be sortable.
- * searchable - (optional) Enables the column to be added into the search haystack.
- * template - (optional) Uses Vue custom template. Only available if type is "template".
- * options - (optional) Object key value pair used when using column type "options".
- * textAlign - (optional) Align's the cell content left, right, center. Defaults to left.
- * actions - (optional) An array of Vue custom templates. Only works on type "actions".
- *
- * Column Methods:
- * @method mutate Alters the value before renderering. Only works on columns with no type property. Passes value to be altered.
- *
- * Column Events:
- * @event keyup Hooks into the keyup event of that specific row column cell. Passes event and the row itself.
- * @event change Hooks into change event of that specific row column cell. Passes event and the row.
- *
- * Example:
- * {
- *      key: "size",
- *      title: "Size",
- *      sortable: true,
- *      searchable: true,
- *      width: 100,
- *      mutate: (value) => {
- *          return moment(value).fromNow();
- *      },
- *      keyup(e, row) {
- *          // do something on the event and row
- *      },
- *      change: (e, row) => {
- *          // do something on the event and row
- *      },
- *      template: Vue.component("status-change", {
- *          template: `<a class="btn" :href="link"><i class="fa fa-eye"></i></a>`,
- *          props: ["column", "row"],
- *          computed: {
- *              link() {
- *                  return Route.name(
- *                      "order.show",
- *                      "{order}",
- *                      this.row.id
- *                  );
- *              },
- *          },
- *      }),
- *      options: [
- *          {
- *              text: 'Displayed text of the select option',
- *              value: 'value of the select option'
- *          }
- *      ],
- *      change: (e, row, column) => {
- *          console.log(row);
- *      },
- * }
- *
- * Table Properties:
- *
- */
 import _ from "lodash";
 import moment from "moment";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "font-awesome/css/font-awesome.min.css";
+// import "font-awesome/css/font-awesome.min.css";
 
 var mixins = {
     methods: {
@@ -592,7 +512,7 @@ var mixins = {
         moneyFormat(value = 0) {
             var formatter = new Intl.NumberFormat("en-US", {
                 style: "currency",
-                currency: "Php"
+                currency: "Php",
             });
 
             return formatter.format(value);
@@ -636,7 +556,7 @@ var mixins = {
                 "template",
                 "options",
                 "prompt",
-                "divider"
+                "divider",
             ];
 
             if (!this.isString(column)) {
@@ -657,11 +577,11 @@ var mixins = {
             if (this.isString(column)) {
                 return column
                     .toLowerCase()
-                    .replace(/(?<= )[^\s]|^./g, a => a.toUpperCase());
+                    .replace(/(?<= )[^\s]|^./g, (a) => a.toUpperCase());
             }
             return this.isset(column.title) ? column.title : "";
-        }
-    }
+        },
+    },
 };
 
 export default {
@@ -673,106 +593,106 @@ export default {
             if (words === null) {
                 return words;
             }
-            return words.toString().replace(check, function(matched) {
+            return words.toString().replace(check, function (matched) {
                 return `<span class="highlight" ${scopeId}>${matched}</span>`;
             });
-        }
+        },
     },
     props: {
         showAll: {
             type: Boolean,
-            default: false
+            default: false,
         },
         placeholder: {
             type: String,
-            default: "Search for..."
+            default: "Search for...",
         },
         clearSearch: {
             type: Function,
-            default: () => {}
+            default: () => {},
         },
         totalTableRows: {
             type: Number,
-            default: 0
+            default: 0,
         },
         realTime: {
             type: Boolean,
-            default: true
+            default: true,
         },
         searchedKeyword: {
             type: String,
-            default: null
+            default: null,
         },
         isAsc: {
             type: Boolean,
-            default: true
+            default: true,
         },
-        currentColumn: {
+        sortedColumn: {
             type: String,
-            default: null
+            default: null,
         },
         page: {
             type: Number,
-            default: 1
+            default: 1,
         },
         limit: {
             type: Number,
-            default: 15
+            default: 15,
         },
         searchCallback: {
             type: Function,
-            default: e => {
+            default: (e) => {
                 return e.target.value;
-            }
+            },
         },
         paginationClick: {
             type: Function,
             default: (e, page) => {
                 return page;
-            }
+            },
         },
-        columnSort: {
+        columnSortCallback: {
             type: Function,
-            default: key => {
+            default: (key) => {
                 return key;
-            }
+            },
         },
         enableSearch: {
             type: Boolean,
-            default: true
+            default: true,
         },
         multipleRows: {
             type: Boolean,
-            default: true
+            default: true,
         },
         exludeColumns: {
             type: Array,
-            default: () => []
+            default: () => [],
         },
         loadingMessage: {
             type: String,
-            default: "Loading..."
+            default: "Loading...",
         },
         emptyMessage: {
             type: String,
-            default: "No data available."
+            default: "No data available.",
         },
         columns: {
             type: Array,
-            default: () => []
+            default: () => [],
         },
         data: {
             type: Array,
-            default: () => []
+            default: () => [],
         },
         freezeColumn: {
             type: Number,
-            default: 0
+            default: 0,
         },
         maxHeight: {
             type: String,
-            default: null
-        }
+            default: null,
+        },
     },
     computed: {
         maxPages() {
@@ -799,7 +719,7 @@ export default {
             for (let i = 0; i < limit; i++) {
                 pages.push({
                     page: start + i,
-                    isCurrent: this.currentPage === start + i
+                    isCurrent: this.currentPage === start + i,
                 });
             }
 
@@ -819,14 +739,14 @@ export default {
                 return this.totalRows;
             }
             return end;
-        }
+        },
     },
     data() {
         return {
             checkAll: false,
             loading: true,
             tableColumns: this.columns,
-            sortedColumn: null,
+            currentColumn: null,
             asc: true,
             columnMethods: {},
             keyword: null,
@@ -839,26 +759,26 @@ export default {
                     : this.data.length,
             oldInputValue: null,
             isSearching: false,
-            searchedKeywordModel: this.searchedKeyword
+            searchedKeywordModel: this.searchedKeyword,
         };
     },
     created() {
         if (this.columns.length <= 0) {
             if (this.data.length > 0) {
-                this.tableColumns = Object.keys(this.data[0]).filter(key => {
+                this.tableColumns = Object.keys(this.data[0]).filter((key) => {
                     return !this.exludeColumns.includes(key);
                 });
             }
         }
-        this.data.map(row => {
+        this.data.map((row) => {
             row.checked = false;
 
             return row;
         });
 
         this.asc = this.isAsc;
-        if (this.isset(this.currentColumn)) {
-            this.sortedColumn = this.currentColumn;
+        if (this.isset(this.sortedColumn)) {
+            this.sortedColumn = this.sortedColumn;
         }
     },
     mounted() {
@@ -906,10 +826,10 @@ export default {
                     keyword: this.isset(this.searchedKeyword)
                         ? this.searchedKeyword
                         : this.keyword,
-                    sortedColumn: this.isset(this.currentColumn)
-                        ? this.currentColumn
+                    sortedColumn: this.isset(this.sortedColumn)
+                        ? this.sortedColumn
                         : this.sortedColumn,
-                    asc: this.asc
+                    asc: this.asc,
                 },
                 this
             );
@@ -928,7 +848,7 @@ export default {
                 this.clearSearch();
             }
         },
-        handleSearchTyping: _.debounce(function(e) {
+        handleSearchTyping: _.debounce(function (e) {
             var keyword = this.searchCallback(e, this);
 
             if (this.isset(keyword) === false) {
@@ -951,7 +871,7 @@ export default {
                 column.change(e, row, column);
             }
         },
-        handleInputKeydown: _.debounce(async function(e, column, row) {
+        handleInputKeydown: _.debounce(async function (e, column, row) {
             if (
                 !this.isString(column) &&
                 {}.hasOwnProperty.call(column, "keydown") &&
@@ -961,7 +881,7 @@ export default {
                 await column.keydown(e, row, column);
             }
         }, 500),
-        handleInputKeyup: _.debounce(async function(e, column, row) {
+        handleInputKeyup: _.debounce(async function (e, column, row) {
             if (
                 !this.isString(column) &&
                 {}.hasOwnProperty.call(column, "keyup") &&
@@ -971,7 +891,7 @@ export default {
                 await column.keyup(e, row, column);
             }
         }, 500),
-        handleInput: _.debounce(async function(e, column, row) {
+        handleInput: _.debounce(async function (e, column, row) {
             if (
                 !this.isString(column) &&
                 {}.hasOwnProperty.call(column, "input") &&
@@ -1008,7 +928,7 @@ export default {
             //     return;
             // }
 
-            var column = this.columnSort(
+            var column = this.columnSortCallback(
                 key,
                 key === this.sortedColumn ? !this.asc : true
             );
@@ -1025,7 +945,7 @@ export default {
             this.sortedColumn = column;
         },
         rows() {
-            var data = this.data.filter(row => {
+            var data = this.data.filter((row) => {
                 if (this.keyword !== null) {
                     var found = false;
                     // get searchable columns
@@ -1044,7 +964,7 @@ export default {
             if (this.sortedColumn !== null && this.realTime) {
                 var sortKey = this.sortedColumn;
 
-                this.columns.find(column => {
+                this.columns.find((column) => {
                     if (
                         column.key === sortKey &&
                         column.sortable &&
@@ -1111,8 +1031,8 @@ export default {
             } else {
                 return data.slice(start, end);
             }
-        }
-    }
+        },
+    },
 };
 </script>
 
@@ -1213,6 +1133,12 @@ export default {
             th.freeze {
                 left: 0;
                 z-index: 2;
+                box-shadow: 1px 0px 0 rgba(0, 0, 0, 0.1);
+            }
+        }
+        th {
+            button:hover {
+                cursor: pointer;
             }
         }
     }
@@ -1230,6 +1156,7 @@ export default {
                 background-color: inherit;
                 z-index: 1;
                 border-left: none;
+                box-shadow: 1px 0px 0 rgba(0, 0, 0, 0.1);
             }
         }
     }

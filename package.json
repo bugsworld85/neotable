@@ -1,6 +1,6 @@
 {
     "name": "neotable",
-    "version": "0.1.4",
+    "version": "0.2.0",
     "private": false,
     "scripts": {
         "serve": "vue-cli-service serve",
@@ -9,8 +9,6 @@
         "build-dist": "vue-cli-service build --target lib --name neo-table ./src/index.js"
     },
     "dependencies": {
-        "bootstrap": "^4.6.0",
-        "font-awesome": "^4.7.0",
         "lodash": "^4.17.20",
         "moment": "^2.29.1",
         "vue": "^2.6.12"
@@ -30,7 +28,7 @@
     "files": [
         "dist/*",
         "src/index.js",
-        "src/components/NeoTable.vue"
+        "src/NeoTable.vue"
     ],
     "repository": {
         "type": "git",
