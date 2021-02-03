@@ -1086,7 +1086,7 @@ export default {
 .table {
     position: relative;
     width: 100%;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
     border-collapse: collapse;
     &.compact {
         tbody,
