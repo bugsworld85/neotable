@@ -1,5 +1,5 @@
 module.exports = {
-    highlight: (words, query, scopeId) => {
+    highlight: (words, query, scopeId, extraQuery = null) => {
         var check = "";
 
         if (query === null && extraQuery !== null) {

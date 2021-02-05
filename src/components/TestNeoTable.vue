@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import NeoTable from "./NeoTable";
+import NeoTable from "../NeoTable";
 
 export default {
     name: "TestNeoTable",
@@ -4633,7 +4633,8 @@ export default {
                     key: "sku",
                     title: "SKU",
                     searchable: true,
-                    sortable: true
+                    sortable: true,
+                    freeze: true,
                 },
                 {
                     key: "your_sku",
@@ -4645,13 +4646,15 @@ export default {
                     key: "name",
                     title: "Name",
                     searchable: true,
-                    sortable: true
+                    sortable: true,
+                    freeze: true,
                 },
                 {
                     key: "brand_name",
                     title: "Brand",
                     searchable: true,
-                    sortable: true
+                    sortable: true,
+                    freeze: true
                 },
                 {
                     key: "barcode",

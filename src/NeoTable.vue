@@ -85,7 +85,7 @@
             :style="{ maxHeight: maxHeight !== null ? maxHeight : 'initial' }"
         >
             <table class="table">
-                <thead v-if="tableColumns.length > 0" class="sticky">
+                <thead v-if="tableColumns.length > 0" class="sticky" ref="thead">
                     <tr>
                         <th
                             v-if="multipleRows"
@@ -110,7 +110,7 @@
                             </div>
                         </th>
                         <th
-                            v-for="(column, a) in tableColumns"
+                            v-for="(column) in tableColumns"
                             :key="`column-${getKey(column)}`"
                             :width="getWidth(column)"
                             :style="{
@@ -120,9 +120,7 @@
                             }"
                             :class="{
                                 'is-divider': getType(column) === 'divider',
-                                freeze:
-                                    freezeColumn === a ||
-                                    (multipleRows && freezeColumn === a + 1),
+                                freeze: isset(column.freeze) && column.freeze ? column.freeze : false,
                             }"
                         >
                             <button
@@ -163,8 +161,8 @@
                         </td>
                     </tr>
                 </tbody>
-                <tbody v-else-if="rows().length > 0" class="sticky">
-                    <tr v-for="(row, i) in rows()" :key="`row-${i}`">
+                <tbody v-else-if="rows().length > 0" class="sticky" ref="tbody">
+                    <tr v-for="(row, i) in rows()" :key="`row-${i}`" :ref="`row${i}`">
                         <td
                             v-if="multipleRows"
                             :class="{
@@ -186,18 +184,16 @@
                             </div>
                         </td>
                         <td
-                            v-for="(column, a) in tableColumns"
+                            v-for="(column) in tableColumns"
                             :key="`col-${getKey(column)}`"
                             :style="{
                                 textAlign: isset(column.textAlign)
                                     ? column.textAlign
-                                    : 'left',
+                                    : 'left'
                             }"
                             :class="{
                                 'is-divider': getType(column) === 'divider',
-                                freeze:
-                                    freezeColumn === a ||
-                                    (multipleRows && freezeColumn === a + 1),
+                                freeze: isset(column.freeze) && column.freeze ? column.freeze : false,
                             }"
                         >
                             <input
@@ -594,8 +590,30 @@ export default {
     mounted() {
         // console.log(this.columns);
         this.loading = false;
+    },
+    updated () {
+        this.$refs.thead.childNodes.forEach(child => {
+            var offsetLeft = 0;
 
-        // console.log(this.data);
+            child.querySelectorAll('.freeze').forEach((element, i) => {
+                if(i > 0){
+                    element.style.left = `${offsetLeft}px`;
+                }
+
+                offsetLeft += element.offsetWidth;
+            });
+        });
+        this.$refs.tbody.childNodes.forEach(child => {
+            var offsetLeft = 0;
+
+            child.querySelectorAll('.freeze').forEach((element, i) => {
+                if(i > 0){
+                    element.style.left = `${offsetLeft}px`;
+                }
+
+                offsetLeft += element.offsetWidth;
+            });
+        });
     },
     methods: {
         handleClick(e, column = {}, row) {
