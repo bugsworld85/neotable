@@ -1,5 +1,5 @@
 <template>
-    <div class="col-md-6">
+    <div class="col-md-12">
         <neo-table
             :showAll="true"
             :data="products"
@@ -9,12 +9,15 @@
             maxHeight="600px"
             :freezeColumn="2"
             :enableSearch="false"
+            sortedColumn="name"
         ></neo-table>
     </div>
 </template>
 
 <script>
 import NeoTable from "../NeoTable";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "font-awesome/css/font-awesome.min.css";
 
 export default {
     name: "TestNeoTable",

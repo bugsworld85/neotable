@@ -110,7 +110,7 @@
                             </div>
                         </th>
                         <th
-                            v-for="(column) in tableColumns"
+                            v-for="(column, i) in tableColumns"
                             :key="`column-${getKey(column)}`"
                             :width="getWidth(column)"
                             :style="{
@@ -120,7 +120,7 @@
                             }"
                             :class="{
                                 'is-divider': getType(column) === 'divider',
-                                freeze: isset(column.freeze) && column.freeze ? column.freeze : false,
+                                freeze: isFroze(column),
                             }"
                         >
                             <button
@@ -145,6 +145,24 @@
                             </button>
                             <span v-else-if="getType(column) !== 'divider'">
                                 {{ getTitle(column) }}
+                            </span>
+                            <span 
+                                v-if="getType(column) !== 'divider' && 
+                                    getType(column) !== 'actions' &&
+                                    freezeColumn !== i" 
+                                    class="column-options"
+                            >
+                                <button 
+                                    type="button" 
+                                    class="btn"
+                                    :class="{
+                                        'btn-light': isset(column.freeze) && column.freeze === false ? true : !(isset(column.freeze) && column.freeze),
+                                        'btn-primary': isset(column.freeze) && column.freeze === true
+                                    }"
+                                    @click="handleFreezeSelect(column, i)"
+                                >
+                                    <i class="fa fa-snowflake-o"></i>
+                                </button>
                             </span>
                         </th>
                     </tr>
@@ -193,7 +211,7 @@
                             }"
                             :class="{
                                 'is-divider': getType(column) === 'divider',
-                                freeze: isset(column.freeze) && column.freeze ? column.freeze : false,
+                                freeze: isFroze(column),
                             }"
                         >
                             <input
@@ -590,32 +608,50 @@ export default {
     mounted() {
         // console.log(this.columns);
         this.loading = false;
+
+        if(this.sortedColumn !== null){
+            this.currentColumn = this.sortedColumn;
+        }
     },
     updated () {
-        this.$refs.thead.childNodes.forEach(child => {
-            var offsetLeft = 0;
-
-            child.querySelectorAll('.freeze').forEach((element, i) => {
-                if(i > 0){
-                    element.style.left = `${offsetLeft}px`;
-                }
-
-                offsetLeft += element.offsetWidth;
-            });
-        });
-        this.$refs.tbody.childNodes.forEach(child => {
-            var offsetLeft = 0;
-
-            child.querySelectorAll('.freeze').forEach((element, i) => {
-                if(i > 0){
-                    element.style.left = `${offsetLeft}px`;
-                }
-
-                offsetLeft += element.offsetWidth;
-            });
-        });
+        this.updateComponents();
     },
     methods: {
+        updateComponents() {
+            this.$refs.thead.childNodes.forEach(child => {
+                var offsetLeft = 0;
+
+                child.querySelectorAll('th, td').forEach((element, i) => {
+
+                    if(element.classList.contains('freeze')){
+
+                        element.style.left = `${offsetLeft}px`;
+
+                        offsetLeft += element.offsetWidth;
+                    }
+                });
+            });
+            this.$refs.tbody.childNodes.forEach(child => {
+                var offsetLeft = 0;
+
+                child.querySelectorAll('th, td').forEach((element, i) => {
+
+                    if(element.classList.contains('freeze')){
+
+                        element.style.left = `${offsetLeft}px`;
+
+                        offsetLeft += element.offsetWidth;
+                    }
+                });
+            });
+        },
+        isFroze(column) {
+            return this.isset(column.freeze) && column.freeze ? column.freeze : false;
+        },
+        handleFreezeSelect(column, colIndex) {
+            column.freeze = !column.freeze;
+            this.$forceUpdate();
+        },
         handleClick(e, column = {}, row) {
             if (
                 !this.isString(column) &&
@@ -947,6 +983,23 @@ export default {
             //     padding: 0;
             //     top: 0;
             // }
+            .column-options{
+                position: absolute;
+                left: 0;
+                padding: 0;
+                // background-color: white;
+                // border: 1px solid #dee2e6;
+                display: none;
+                box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+                .btn{
+                    // background-color: white;
+                }
+            }
+            &:hover{
+                .column-options{
+                    display: block;
+                }
+            }
         }
         &.sticky {
             th,
@@ -1031,7 +1084,7 @@ table {
             padding: 0;
             vertical-align: middle;
             white-space: nowrap;
-            button {
+            > button {
                 border: none;
                 background-color: transparent;
                 display: block;
