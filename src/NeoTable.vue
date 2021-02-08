@@ -121,6 +121,7 @@
                             :class="{
                                 'is-divider': getType(column) === 'divider',
                                 freeze: isFroze(column),
+                                'active-column': currentColumn === getKey(column)
                             }"
                         >
                             <button
@@ -130,26 +131,22 @@
                             >
                                 {{ getTitle(column) }}
                                 <i
-                                    class="fa fa-sort-up"
-                                    v-if="
-                                        currentColumn === getKey(column) && asc
-                                    "
+                                    class="fa fa-sort-up text-primary"
+                                    v-if="isAscending(column, currentColumn, asc)"
                                 ></i>
                                 <i
-                                    class="fa fa-sort-down"
-                                    v-else-if="
-                                        currentColumn === getKey(column) && !asc
-                                    "
+                                    class="fa fa-sort-down text-primary"
+                                    v-else-if="isAscending(column, currentColumn, !asc)"
                                 ></i>
                                 <i class="fa fa-sort" v-else></i>
+                                <i class="fa fa-snowflake-o" v-if="isFroze(column)"></i>
                             </button>
                             <span v-else-if="getType(column) !== 'divider'">
                                 {{ getTitle(column) }}
                             </span>
                             <span 
                                 v-if="getType(column) !== 'divider' && 
-                                    getType(column) !== 'actions' &&
-                                    freezeColumn !== i" 
+                                    getType(column) !== 'actions'" 
                                     class="column-options"
                             >
                                 <button 
@@ -599,17 +596,12 @@ export default {
 
             return row;
         });
-
-        this.asc = this.isAsc;
-        if (this.isset(this.sortedColumn)) {
-            this.sortedColumn = this.sortedColumn;
-        }
     },
     mounted() {
         // console.log(this.columns);
         this.loading = false;
-
-        if(this.sortedColumn !== null){
+        this.asc = this.isAsc;
+        if (this.isset(this.sortedColumn)) {
             this.currentColumn = this.sortedColumn;
         }
     },
@@ -618,32 +610,39 @@ export default {
     },
     methods: {
         updateComponents() {
-            this.$refs.thead.childNodes.forEach(child => {
-                var offsetLeft = 0;
+            if(this.$refs.thead){
+                this.$refs.thead.childNodes.forEach(child => {
+                    var offsetLeft = 0;
 
-                child.querySelectorAll('th, td').forEach((element, i) => {
+                    child.querySelectorAll('th, td').forEach((element, i) => {
 
-                    if(element.classList.contains('freeze')){
+                        if(element.classList.contains('freeze')){
 
-                        element.style.left = `${offsetLeft}px`;
+                            element.style.left = `${offsetLeft}px`;
 
-                        offsetLeft += element.offsetWidth;
-                    }
+                            offsetLeft += element.offsetWidth;
+                        }else{
+                            element.style.left = 'initial';
+                        }
+                    });
                 });
-            });
-            this.$refs.tbody.childNodes.forEach(child => {
-                var offsetLeft = 0;
+            }
 
-                child.querySelectorAll('th, td').forEach((element, i) => {
+            if(this.isset(this.$refs.tbody)){
+                this.$refs.tbody.childNodes.forEach(child => {
+                    var offsetLeft = 0;
 
-                    if(element.classList.contains('freeze')){
+                    child.querySelectorAll('th, td').forEach((element, i) => {
 
-                        element.style.left = `${offsetLeft}px`;
+                        if(element.classList.contains('freeze')){
 
-                        offsetLeft += element.offsetWidth;
-                    }
+                            element.style.left = `${offsetLeft}px`;
+
+                            offsetLeft += element.offsetWidth;
+                        }
+                    });
                 });
-            });
+            }
         },
         isFroze(column) {
             return this.isset(column.freeze) && column.freeze ? column.freeze : false;
@@ -784,31 +783,22 @@ export default {
             }
         },
         handleColumnSort(key) {
-            // if (!this.realTime) {
-            //     window.location.href = Route.name("orders", null, null, {
-            //         order_column: key,
-            //         order_asc: !this.asc,
-            //     });
-            //     return;
-            // }
 
-            var column = this.columnSortCallback(
-                key,
-                key === this.sortedColumn ? !this.asc : true
-            );
+            this.$emit('sortClick', key, key === this.currentColumn ? !this.asc : true);
 
-            if (this.isset(column) === false) {
-                return;
-            }
-
-            if (column === this.sortedColumn) {
+            if (key === this.currentColumn) {
                 this.asc = !this.asc;
             } else {
                 this.asc = true;
             }
-            this.sortedColumn = column;
+
+            this.currentColumn = key;
         },
         rows() {
+            if (this.showAll) {
+                return this.data;
+            }
+
             var data = this.data.filter((row) => {
                 if (this.keyword !== null) {
                     var found = false;
@@ -870,10 +860,6 @@ export default {
 
                     return 0;
                 });
-            }
-
-            if (this.showAll) {
-                return data;
             }
 
             var start = (this.currentPage - 1) * this.limit;
@@ -991,9 +977,6 @@ export default {
                 // border: 1px solid #dee2e6;
                 display: none;
                 box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-                .btn{
-                    // background-color: white;
-                }
             }
             &:hover{
                 .column-options{
