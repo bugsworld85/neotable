@@ -87,7 +87,7 @@ module.exports = [
             },
             isAscending(column, currentColumn, asc) {
                 return currentColumn === this.getKey(column) && asc;
-            }
+            },
         },
     },
 ];

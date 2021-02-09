@@ -6,8 +6,8 @@ export default {
         Vue.component("neo-table", NeoTable);
         Vue.component("neo-paginator", NeoPaginator);
     },
-    NeoTable,
-    NeoPaginator,
+    NeoTable: NeoTable,
+    NeoPaginator: NeoPaginator,
 };
 
 // if (typeof window !== "undefined" && window.Vue) {
