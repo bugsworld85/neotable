@@ -85,11 +85,7 @@
             :style="{ maxHeight: maxHeight !== null ? maxHeight : 'initial' }"
         >
             <table class="table">
-                <thead
-                    v-if="tableColumns.length > 0"
-                    class="sticky"
-                    ref="thead"
-                >
+                <thead v-if="tableColumns.length > 0" class="sticky" ref="thead">
                     <tr>
                         <th
                             v-if="multipleRows"
@@ -125,8 +121,7 @@
                             :class="{
                                 'is-divider': getType(column) === 'divider',
                                 freeze: isFroze(column),
-                                'active-column':
-                                    currentColumn === getKey(column),
+                                'active-column': currentColumn === getKey(column)
                             }"
                         >
                             <button
@@ -137,47 +132,33 @@
                                 {{ getTitle(column) }}
                                 <i
                                     class="fa fa-sort-up text-primary"
-                                    v-if="
-                                        isAscending(column, currentColumn, asc)
-                                    "
+                                    v-if="isAscending(column, currentColumn, asc)"
                                 ></i>
                                 <i
                                     class="fa fa-sort-down text-primary"
-                                    v-else-if="
-                                        isAscending(column, currentColumn, !asc)
-                                    "
+                                    v-else-if="isAscending(column, currentColumn, !asc)"
                                 ></i>
                                 <i class="fa fa-sort" v-else></i>
+                                <i class="fa fa-snowflake-o" v-if="isFroze(column)"></i>
+                            </button>
+                            <span v-else-if="getType(column) !== 'divider'">
+                                {{ getTitle(column) }}
                                 <i
                                     class="fa fa-snowflake-o"
                                     v-if="isFroze(column)"
                                 ></i>
-                            </button>
-                            <span v-else-if="getType(column) !== 'divider'">
-                                {{ getTitle(column) }}
                             </span>
-                            <span
-                                v-if="
-                                    getType(column) !== 'divider' &&
-                                    getType(column) !== 'actions'
-                                "
-                                class="column-options"
+                            <span 
+                                v-if="getType(column) !== 'divider' && 
+                                    getType(column) !== 'actions'" 
+                                    class="column-options"
                             >
-                                <button
-                                    type="button"
+                                <button 
+                                    type="button" 
                                     class="btn"
                                     :class="{
-                                        'btn-light':
-                                            isset(column.freeze) &&
-                                            column.freeze === false
-                                                ? true
-                                                : !(
-                                                      isset(column.freeze) &&
-                                                      column.freeze
-                                                  ),
-                                        'btn-primary':
-                                            isset(column.freeze) &&
-                                            column.freeze === true,
+                                        'btn-light': isset(column.freeze) && column.freeze === false ? true : !(isset(column.freeze) && column.freeze),
+                                        'btn-primary': isset(column.freeze) && column.freeze === true
                                     }"
                                     @click="handleFreezeSelect(column, i)"
                                 >
@@ -200,11 +181,7 @@
                     </tr>
                 </tbody>
                 <tbody v-else-if="rows().length > 0" class="sticky" ref="tbody">
-                    <tr
-                        v-for="(row, i) in rows()"
-                        :key="`row-${i}`"
-                        :ref="`row${i}`"
-                    >
+                    <tr v-for="(row, i) in rows()" :key="`row-${i}`" :ref="`row${i}`">
                         <td
                             v-if="multipleRows"
                             :class="{
@@ -226,12 +203,12 @@
                             </div>
                         </td>
                         <td
-                            v-for="column in tableColumns"
+                            v-for="(column) in tableColumns"
                             :key="`col-${getKey(column)}`"
                             :style="{
                                 textAlign: isset(column.textAlign)
                                     ? column.textAlign
-                                    : 'left',
+                                    : 'left'
                             }"
                             :class="{
                                 'is-divider': getType(column) === 'divider',
@@ -632,33 +609,37 @@ export default {
             this.currentColumn = this.sortedColumn;
         }
     },
-    updated() {
+    updated () {
         this.updateComponents();
     },
     methods: {
         updateComponents() {
-            if (this.$refs.thead) {
-                this.$refs.thead.childNodes.forEach((child) => {
+            if(this.$refs.thead){
+                this.$refs.thead.childNodes.forEach(child => {
                     var offsetLeft = 0;
 
-                    child.querySelectorAll("th, td").forEach((element, i) => {
-                        if (element.classList.contains("freeze")) {
+                    child.querySelectorAll('th, td').forEach((element, i) => {
+
+                        if(element.classList.contains('freeze')){
+
                             element.style.left = `${offsetLeft}px`;
 
                             offsetLeft += element.offsetWidth;
-                        } else {
-                            element.style.left = "initial";
+                        }else{
+                            element.style.left = 'initial';
                         }
                     });
                 });
             }
 
-            if (this.isset(this.$refs.tbody)) {
-                this.$refs.tbody.childNodes.forEach((child) => {
+            if(this.isset(this.$refs.tbody)){
+                this.$refs.tbody.childNodes.forEach(child => {
                     var offsetLeft = 0;
 
-                    child.querySelectorAll("th, td").forEach((element, i) => {
-                        if (element.classList.contains("freeze")) {
+                    child.querySelectorAll('th, td').forEach((element, i) => {
+
+                        if(element.classList.contains('freeze')){
+
                             element.style.left = `${offsetLeft}px`;
 
                             offsetLeft += element.offsetWidth;
@@ -668,9 +649,7 @@ export default {
             }
         },
         isFroze(column) {
-            return this.isset(column.freeze) && column.freeze
-                ? column.freeze
-                : false;
+            return this.isset(column.freeze) && column.freeze ? column.freeze : false;
         },
         handleFreezeSelect(column, colIndex) {
             column.freeze = !column.freeze;
@@ -808,11 +787,8 @@ export default {
             }
         },
         handleColumnSort(key) {
-            this.$emit(
-                "sortClick",
-                key,
-                key === this.currentColumn ? !this.asc : true
-            );
+
+            this.$emit('sortClick', key, key === this.currentColumn ? !this.asc : true);
 
             if (key === this.currentColumn) {
                 this.asc = !this.asc;
@@ -997,17 +973,17 @@ export default {
             //     padding: 0;
             //     top: 0;
             // }
-            .column-options {
+            .column-options{
                 position: absolute;
                 left: 0;
                 padding: 0;
                 // background-color: white;
                 // border: 1px solid #dee2e6;
                 display: none;
-                box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 2px 3px rgba(0,0,0,0.1);
             }
-            &:hover {
-                .column-options {
+            &:hover{
+                .column-options{
                     display: block;
                 }
             }
@@ -1104,7 +1080,10 @@ table {
                 text-align: left;
                 padding: 0.5em;
                 text-align: inherit;
+                color: inherit;
                 i {
+                    // float: right;
+                    // transform: translate(-10px, calc(50% - 3px));
                     color: #aaa;
                 }
                 &:hover {
@@ -1117,6 +1096,14 @@ table {
             span {
                 padding: 0.5em;
                 font-weight: normal;
+                i{
+                    color: #aaa;
+                }
+            }
+            .btn{
+                i{
+                    color: inherit;
+                }
             }
         }
     }

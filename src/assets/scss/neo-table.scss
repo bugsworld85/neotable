@@ -1,0 +1,266 @@
+.table-module {
+    position: relative;
+}
+.table-container {
+    position: relative;
+    overflow: auto;
+    margin-bottom: 5px;
+    border: 1px solid #dee2e6;
+}
+.pagination {
+    .page-item.disabled,
+    .page-item.active {
+        pointer-events: none;
+    }
+}
+.table-filter {
+    margin-bottom: 5px;
+    .form-control {
+        background-color: white !important;
+    }
+}
+
+.highlight {
+    background-color: yellow !important;
+    padding: 0;
+    border-radius: 3px;
+}
+
+.fit-screen {
+    height: 100vh;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    &.fs-1 {
+        max-height: calc(100vh - 190px);
+    }
+    &.fs-2 {
+        max-height: calc(100vh - 180px);
+    }
+}
+
+.ellipsis {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.table {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0;
+    border-collapse: collapse;
+    &.compact {
+        tbody,
+        thead {
+            td,
+            th,
+            th:first-child,
+            th:last-child {
+                border-top: none;
+                padding: 5px 10px;
+            }
+        }
+    }
+    thead {
+        td,
+        th,
+        th:first-child {
+            padding: 0;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        td,
+        th {
+            position: relative;
+            border-bottom: 2px solid #dee2e6;
+            // .freeze {
+            //     position: absolute;
+            //     display: block;
+            //     width: 100%;
+            //     padding: 0;
+            //     top: 0;
+            // }
+            .column-options {
+                position: absolute;
+                left: 0;
+                padding: 0;
+                // background-color: white;
+                // border: 1px solid #dee2e6;
+                display: none;
+                box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+            }
+            &:hover {
+                .column-options {
+                    display: block;
+                }
+            }
+        }
+        &.sticky {
+            th,
+            td {
+                position: -webkit-sticky; /* for Safari */
+                position: sticky;
+                top: 0;
+                background-color: #f9f9f9;
+                z-index: 1;
+                border-top: none;
+            }
+            th.freeze {
+                left: 0;
+                z-index: 2;
+                box-shadow: 1px 0px 0 rgba(0, 0, 0, 0.1);
+            }
+        }
+        th {
+            button:hover {
+                cursor: pointer;
+            }
+        }
+    }
+    tbody {
+        td,
+        th {
+            white-space: nowrap;
+        }
+        &.sticky {
+            th.freeze,
+            td.freeze {
+                position: -webkit-sticky; /* for Safari */
+                position: sticky;
+                left: 0;
+                background-color: inherit;
+                z-index: 1;
+                border-left: none;
+                box-shadow: 1px 0px 0 rgba(0, 0, 0, 0.1);
+            }
+        }
+    }
+    &.editable {
+        tbody {
+            td {
+                border-top: none;
+                padding: 0;
+                .btn,
+                .form-control {
+                    margin: 3px 0;
+                }
+            }
+        }
+    }
+}
+
+.noevents {
+    pointer-events: none;
+}
+
+.custom-switch {
+    &:hover,
+    > *:hover {
+        cursor: pointer;
+    }
+}
+
+.w-full {
+    width: 100%;
+}
+
+.text-only {
+    word-break: break-all;
+    // white-space: nowrap;
+}
+
+table {
+    .is-divider {
+        border-right: 1px solid #dee2e6;
+    }
+    thead {
+        th {
+            padding: 0;
+            vertical-align: middle;
+            white-space: nowrap;
+            > button {
+                border: none;
+                background-color: transparent;
+                display: block;
+                outline: none;
+                width: 100%;
+                text-align: left;
+                padding: 0.5em;
+                text-align: inherit;
+                i {
+                    color: #aaa;
+                }
+                &:hover {
+                    background-color: rgba(175, 175, 175, 0.3);
+                }
+            }
+            &.checkboxes:first-child {
+                padding: 0.5em 0.75rem;
+            }
+            span {
+                padding: 0.5em;
+                font-weight: normal;
+            }
+        }
+    }
+    tbody {
+        tr {
+            &:nth-child(even) {
+                background-color: #e9ecf3;
+            }
+            &:nth-child(odd) {
+                background-color: white;
+            }
+            &:hover {
+                background-color: #bae3ef;
+            }
+        }
+        td {
+            padding: 0;
+            vertical-align: middle;
+            .btn {
+                color: #888;
+            }
+            span {
+                padding: 7px 5px;
+                text-align: inherit;
+                display: inline-block;
+            }
+            div {
+                text-align: inherit;
+            }
+            input {
+                &[type="text"] {
+                    display: block;
+                    width: 100%;
+                }
+                &[type="text"],
+                &[type="number"] {
+                    background-color: transparent;
+                    border: 2px solid transparent;
+                    padding: 4px 5px;
+                    text-align: inherit;
+                    cursor: pointer;
+                    width: 100%;
+                    &:focus {
+                        outline: none;
+                        cursor: pointer;
+                    }
+                    &:not([readonly]):focus {
+                        background-color: white;
+                        outline: 3px solid #bedef4;
+                        cursor: default;
+                        outline-color: #bedef4;
+                        outline-width: 3px;
+                    }
+                }
+            }
+        }
+    }
+}
+.custom-switch:hover,
+.custom-checkbox:hover {
+    label {
+        cursor: pointer;
+    }
+}

@@ -88,6 +88,11 @@ module.exports = [
             isAscending(column, currentColumn, asc) {
                 return currentColumn === this.getKey(column) && asc;
             },
+            isFroze(column) {
+                return this.isset(column.freeze) && column.freeze
+                    ? column.freeze
+                    : false;
+            },
         },
     },
 ];
