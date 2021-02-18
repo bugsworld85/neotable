@@ -1,7 +1,7 @@
 <template>
     <div ref="window" class="window" v-if="show" :class="classes">
         <div class="header ns" @mousedown="onDrag" @dragstart="onDragStart">
-            <span class="title">{{ title }}</span>
+            <span class="title" v-html="title">{{ title }}</span>
             <span class="controls">
                 <!-- <button
                     type="button"
