@@ -85,7 +85,11 @@
             :style="{ maxHeight: maxHeight !== null ? maxHeight : 'initial' }"
         >
             <table class="table">
-                <thead v-if="tableColumns.length > 0" class="sticky" ref="thead">
+                <thead
+                    v-if="tableColumns.length > 0"
+                    class="sticky"
+                    ref="thead"
+                >
                     <tr>
                         <th
                             v-if="multipleRows"
@@ -121,7 +125,8 @@
                             :class="{
                                 'is-divider': getType(column) === 'divider',
                                 freeze: isFroze(column),
-                                'active-column': currentColumn === getKey(column)
+                                'active-column':
+                                    currentColumn === getKey(column),
                             }"
                         >
                             <button
@@ -132,14 +137,21 @@
                                 {{ getTitle(column) }}
                                 <i
                                     class="fa fa-sort-up text-primary"
-                                    v-if="isAscending(column, currentColumn, asc)"
+                                    v-if="
+                                        isAscending(column, currentColumn, asc)
+                                    "
                                 ></i>
                                 <i
                                     class="fa fa-sort-down text-primary"
-                                    v-else-if="isAscending(column, currentColumn, !asc)"
+                                    v-else-if="
+                                        isAscending(column, currentColumn, !asc)
+                                    "
                                 ></i>
                                 <i class="fa fa-sort" v-else></i>
-                                <i class="fa fa-snowflake-o" v-if="isFroze(column)"></i>
+                                <i
+                                    class="fa fa-snowflake-o"
+                                    v-if="isFroze(column)"
+                                ></i>
                             </button>
                             <span v-else-if="getType(column) !== 'divider'">
                                 {{ getTitle(column) }}
@@ -148,17 +160,28 @@
                                     v-if="isFroze(column)"
                                 ></i>
                             </span>
-                            <span 
-                                v-if="getType(column) !== 'divider' && 
-                                    getType(column) !== 'actions'" 
-                                    class="column-options"
+                            <span
+                                v-if="
+                                    getType(column) !== 'divider' &&
+                                    getType(column) !== 'actions'
+                                "
+                                class="column-options"
                             >
-                                <button 
-                                    type="button" 
-                                    class="btn"
+                                <button
+                                    type="button"
+                                    class="btn btn-sm"
                                     :class="{
-                                        'btn-light': isset(column.freeze) && column.freeze === false ? true : !(isset(column.freeze) && column.freeze),
-                                        'btn-primary': isset(column.freeze) && column.freeze === true
+                                        'btn-light':
+                                            isset(column.freeze) &&
+                                            column.freeze === false
+                                                ? true
+                                                : !(
+                                                      isset(column.freeze) &&
+                                                      column.freeze
+                                                  ),
+                                        'btn-primary':
+                                            isset(column.freeze) &&
+                                            column.freeze === true,
                                     }"
                                     @click="handleFreezeSelect(column, i)"
                                 >
@@ -181,7 +204,11 @@
                     </tr>
                 </tbody>
                 <tbody v-else-if="rows().length > 0" class="sticky" ref="tbody">
-                    <tr v-for="(row, i) in rows()" :key="`row-${i}`" :ref="`row${i}`">
+                    <tr
+                        v-for="(row, i) in rows()"
+                        :key="`row-${i}`"
+                        :ref="`row${i}`"
+                    >
                         <td
                             v-if="multipleRows"
                             :class="{
@@ -203,12 +230,12 @@
                             </div>
                         </td>
                         <td
-                            v-for="(column) in tableColumns"
+                            v-for="column in tableColumns"
                             :key="`col-${getKey(column)}`"
                             :style="{
                                 textAlign: isset(column.textAlign)
                                     ? column.textAlign
-                                    : 'left'
+                                    : 'left',
                             }"
                             :class="{
                                 'is-divider': getType(column) === 'divider',
@@ -507,387 +534,388 @@
 </template>
 
 <script>
-import _ from "lodash";
-import moment from "moment";
-import mixins from "./lib/mixins.js";
-import filters from "./lib/filters.js";
-import props from "./lib/props.js";
-// import "font-awesome/css/font-awesome.min.css";
+    import _ from "lodash";
+    import moment from "moment";
+    import mixins from "./lib/mixins.js";
+    import filters from "./lib/filters.js";
+    import props from "./lib/props.js";
+    // import "font-awesome/css/font-awesome.min.css";
 
-export default {
-    name: "neo-table",
-    mixins,
-    filters,
-    props,
-    computed: {
-        maxPages() {
-            var pages = [];
-            var start = 1;
-            var limit = this.totalPages;
+    export default {
+        name: "neo-table",
+        mixins,
+        filters,
+        props,
+        computed: {
+            maxPages() {
+                var pages = [];
+                var start = 1;
+                var limit = this.totalPages;
 
-            if (this.currentPage > this.totalPages - 2) {
-                start = this.totalPages - 4;
-            } else if (this.currentPage < 3) {
-                start = 1;
-            } else if (this.currentPage >= 3) {
-                start = this.currentPage - 2;
-            }
-            // if total pages is below 5, always start at 1
-            if (this.totalPages < 5) {
-                start = 1;
-            }
-
-            if (this.totalPages >= 5) {
-                limit = 5;
-            }
-
-            for (let i = 0; i < limit; i++) {
-                pages.push({
-                    page: start + i,
-                    isCurrent: this.currentPage === start + i,
-                });
-            }
-
-            return pages;
-        },
-        start() {
-            return (this.currentPage - 1) * this.limit + 1;
-        },
-        end() {
-            var end = this.currentPage * this.limit;
-
-            if (this.totalRows < this.limit) {
-                return this.totalRows;
-            }
-
-            if (end > this.totalRows) {
-                return this.totalRows;
-            }
-            return end;
-        },
-    },
-    data() {
-        return {
-            checkAll: false,
-            loading: true,
-            tableColumns: this.columns,
-            currentColumn: null,
-            asc: true,
-            columnMethods: {},
-            keyword: null,
-            searching: false,
-            totalPages: Math.ceil(this.data.length / this.limit),
-            currentPage: this.page,
-            totalRows:
-                this.totalTableRows > 0
-                    ? this.totalTableRows
-                    : this.data.length,
-            oldInputValue: null,
-            isSearching: false,
-            searchedKeywordModel: this.searchedKeyword,
-        };
-    },
-    created() {
-        if (this.columns.length <= 0) {
-            if (this.data.length > 0) {
-                this.tableColumns = Object.keys(this.data[0]).filter((key) => {
-                    return !this.exludeColumns.includes(key);
-                });
-            }
-        }
-        this.data.map((row) => {
-            row.checked = false;
-
-            return row;
-        });
-    },
-    mounted() {
-        // console.log(this.columns);
-        this.loading = false;
-        this.asc = this.isAsc;
-        if (this.isset(this.sortedColumn)) {
-            this.currentColumn = this.sortedColumn;
-        }
-    },
-    updated () {
-        this.updateComponents();
-    },
-    methods: {
-        updateComponents() {
-            if(this.$refs.thead){
-                this.$refs.thead.childNodes.forEach(child => {
-                    var offsetLeft = 0;
-
-                    child.querySelectorAll('th, td').forEach((element, i) => {
-
-                        if(element.classList.contains('freeze')){
-
-                            element.style.left = `${offsetLeft}px`;
-
-                            offsetLeft += element.offsetWidth;
-                        }else{
-                            element.style.left = 'initial';
-                        }
-                    });
-                });
-            }
-
-            if(this.isset(this.$refs.tbody)){
-                this.$refs.tbody.childNodes.forEach(child => {
-                    var offsetLeft = 0;
-
-                    child.querySelectorAll('th, td').forEach((element, i) => {
-
-                        if(element.classList.contains('freeze')){
-
-                            element.style.left = `${offsetLeft}px`;
-
-                            offsetLeft += element.offsetWidth;
-                        }
-                    });
-                });
-            }
-        },
-        isFroze(column) {
-            return this.isset(column.freeze) && column.freeze ? column.freeze : false;
-        },
-        handleFreezeSelect(column, colIndex) {
-            column.freeze = !column.freeze;
-            this.$forceUpdate();
-        },
-        handleClick(e, column = {}, row) {
-            if (
-                !this.isString(column) &&
-                {}.hasOwnProperty.call(column, "message") &&
-                {}.hasOwnProperty.call(column, "confirmed")
-            ) {
-                var value = prompt(
-                    column.message,
-                    this.isset(row[this.getKey(column)])
-                        ? row[this.getKey(column)]
-                        : ""
-                );
-
-                if (this.isset(value)) {
-                    row[this.getKey(column)] = value;
-                    column.confirmed(value, row);
+                if (this.currentPage > this.totalPages - 2) {
+                    start = this.totalPages - 4;
+                } else if (this.currentPage < 3) {
+                    start = 1;
+                } else if (this.currentPage >= 3) {
+                    start = this.currentPage - 2;
                 }
-            }
-        },
-        handleSearchClick() {
-            this.$refs.searchForm.submit();
-        },
-        handleSelectChange(e, row, column) {
-            if (
-                !this.isString(column) &&
-                {}.hasOwnProperty.call(column, "change")
-            ) {
-                column.change(e, row, column);
-            }
-        },
-        handlePaginationClick(e, page) {
-            var currentPage = this.paginationClick(
-                e,
-                page,
-                {
-                    keyword: this.isset(this.searchedKeyword)
-                        ? this.searchedKeyword
-                        : this.keyword,
-                    sortedColumn: this.isset(this.sortedColumn)
-                        ? this.sortedColumn
-                        : this.sortedColumn,
-                    asc: this.asc,
-                },
-                this
-            );
-
-            if (this.isset(currentPage)) {
-                this.currentPage = currentPage;
-            }
-        },
-        handleClearSearch() {
-            this.searching = false;
-            this.keyword = null;
-            this.currentPage = 1;
-            this.isSearching = false;
-            if (!this.realTime) {
-                this.searchedKeywordModel = null;
-                this.clearSearch();
-            }
-        },
-        handleSearchTyping: _.debounce(function (e) {
-            var keyword = this.searchCallback(e, this);
-
-            if (this.isset(keyword) === false) {
-                this.isSearching = true;
-                return;
-            }
-            if (keyword !== "") {
-                this.keyword = keyword;
-            } else {
-                this.handleClearSearch();
-            }
-            this.currentPage = 1;
-        }, 500),
-        handleInputChange(e, column, row) {
-            if (
-                !this.isString(column) &&
-                {}.hasOwnProperty.call(column, "change") &&
-                e.target.readOnly === false
-            ) {
-                column.change(e, row, column);
-            }
-        },
-        handleInputKeydown: _.debounce(async function (e, column, row) {
-            if (
-                !this.isString(column) &&
-                {}.hasOwnProperty.call(column, "keydown") &&
-                e.target.readOnly === false &&
-                e.location === 0
-            ) {
-                await column.keydown(e, row, column);
-            }
-        }, 500),
-        handleInputKeyup: _.debounce(async function (e, column, row) {
-            if (
-                !this.isString(column) &&
-                {}.hasOwnProperty.call(column, "keyup") &&
-                e.target.readOnly === false &&
-                e.location === 0
-            ) {
-                await column.keyup(e, row, column);
-            }
-        }, 500),
-        handleInput: _.debounce(async function (e, column, row) {
-            if (
-                !this.isString(column) &&
-                {}.hasOwnProperty.call(column, "input") &&
-                e.target.readOnly === false
-            ) {
-                await column.input(e, row, column);
-            }
-        }, 500),
-        handleInputBlur(e) {
-            e.target.readOnly = true;
-        },
-        handleInputDoubleClick(e) {
-            this.oldInputValue = e.target.value;
-            e.target.readOnly = false;
-        },
-        handleRowSelect(e) {
-            if (!e.target.checked) {
-                this.checkAll = false;
-            }
-        },
-        handleChangeAll(e) {
-            this.checkAll = e.target.checked;
-
-            for (let i = 0; i < this.data.length; i++) {
-                this.data[i].checked = this.checkAll;
-            }
-        },
-        handleColumnSort(key) {
-
-            this.$emit('sortClick', key, key === this.currentColumn ? !this.asc : true);
-
-            if (key === this.currentColumn) {
-                this.asc = !this.asc;
-            } else {
-                this.asc = true;
-            }
-
-            this.currentColumn = key;
-        },
-        rows() {
-            if (this.showAll) {
-                return this.data;
-            }
-
-            var data = this.data.filter((row) => {
-                if (this.keyword !== null) {
-                    var found = false;
-                    // get searchable columns
-                    for (let i = 0; i < this.columns.length; i++) {
-                        if (this.isSearchable(this.columns[i])) {
-                            if (this.search(row[this.columns[i].key])) {
-                                found = true;
-                            }
-                        }
-                    }
-                    return found;
+                // if total pages is below 5, always start at 1
+                if (this.totalPages < 5) {
+                    start = 1;
                 }
-                return true;
-            });
 
-            if (this.sortedColumn !== null && this.realTime) {
-                var sortKey = this.sortedColumn;
+                if (this.totalPages >= 5) {
+                    limit = 5;
+                }
 
-                this.columns.find((column) => {
-                    if (
-                        column.key === sortKey &&
-                        column.sortable &&
-                        this.isset(column.sortKey)
-                    ) {
-                        sortKey = column.sortKey;
-                        return true;
-                    }
-                    return false;
-                });
+                for (let i = 0; i < limit; i++) {
+                    pages.push({
+                        page: start + i,
+                        isCurrent: this.currentPage === start + i,
+                    });
+                }
 
-                // sort rows by column
-                data.sort((a, b) => {
-                    if (!isNaN(a[sortKey]) && !isNaN(b[sortKey])) {
-                        if (a[sortKey] < b[sortKey]) {
-                            return this.asc ? -1 : 1;
-                        }
-                        if (a[sortKey] > b[sortKey]) {
-                            return this.asc ? 1 : -1;
-                        }
-                    } else if (
-                        moment(a[sortKey]).isValid() &&
-                        moment(b[sortKey]).isValid()
-                    ) {
-                        if (moment(a[sortKey]) - moment(b[sortKey]) > 0) {
-                            return this.asc ? -1 : 1;
-                        }
-                        if (moment(a[sortKey]) - moment(b[sortKey]) < 0) {
-                            return this.asc ? 1 : -1;
-                        }
-                    } else {
-                        if (a[sortKey] < b[sortKey]) {
-                            return this.asc ? -1 : 1;
-                        }
-                        if (a[sortKey] > b[sortKey]) {
-                            return this.asc ? 1 : -1;
-                        }
-                    }
+                return pages;
+            },
+            start() {
+                return (this.currentPage - 1) * this.limit + 1;
+            },
+            end() {
+                var end = this.currentPage * this.limit;
 
-                    return 0;
-                });
-            }
+                if (this.totalRows < this.limit) {
+                    return this.totalRows;
+                }
 
-            var start = (this.currentPage - 1) * this.limit;
-            var end = start + this.limit;
-
-            if (this.keyword === null) {
-                this.totalRows =
+                if (end > this.totalRows) {
+                    return this.totalRows;
+                }
+                return end;
+            },
+        },
+        data() {
+            return {
+                checkAll: false,
+                loading: true,
+                tableColumns: this.columns,
+                currentColumn: null,
+                asc: true,
+                columnMethods: {},
+                keyword: null,
+                searching: false,
+                totalPages: Math.ceil(this.data.length / this.limit),
+                currentPage: this.page,
+                totalRows:
                     this.totalTableRows > 0
                         ? this.totalTableRows
-                        : this.data.length;
-                this.totalPages = Math.ceil(this.totalRows / this.limit);
-            } else {
-                this.totalRows = data.length;
-                this.totalPages = Math.ceil(this.totalRows / this.limit);
+                        : this.data.length,
+                oldInputValue: null,
+                isSearching: false,
+                searchedKeywordModel: this.searchedKeyword,
+            };
+        },
+        created() {
+            if (this.columns.length <= 0) {
+                if (this.data.length > 0) {
+                    this.tableColumns = Object.keys(this.data[0]).filter((key) => {
+                        return !this.exludeColumns.includes(key);
+                    });
+                }
             }
+            this.data.map((row) => {
+                row.checked = false;
 
-            if (data.length < start) {
-                return data;
-            } else {
-                return data.slice(start, end);
+                return row;
+            });
+        },
+        mounted() {
+            // console.log(this.columns);
+            this.loading = false;
+            this.asc = this.isAsc;
+            if (this.isset(this.sortedColumn)) {
+                this.currentColumn = this.sortedColumn;
             }
         },
-    },
-};
+        updated() {
+            this.updateComponents();
+        },
+        methods: {
+            updateComponents() {
+                if (this.$refs.thead) {
+                    this.$refs.thead.childNodes.forEach((child) => {
+                        var offsetLeft = 0;
+
+                        child.querySelectorAll("th, td").forEach((element, i) => {
+                            if (element.classList.contains("freeze")) {
+                                element.style.left = `${offsetLeft}px`;
+
+                                offsetLeft += element.offsetWidth;
+                            } else {
+                                element.style.left = "initial";
+                            }
+                        });
+                    });
+                }
+
+                if (this.isset(this.$refs.tbody)) {
+                    this.$refs.tbody.childNodes.forEach((child) => {
+                        var offsetLeft = 0;
+
+                        child.querySelectorAll("th, td").forEach((element, i) => {
+                            if (element.classList.contains("freeze")) {
+                                element.style.left = `${offsetLeft}px`;
+
+                                offsetLeft += element.offsetWidth;
+                            }
+                        });
+                    });
+                }
+            },
+            isFroze(column) {
+                return this.isset(column.freeze) && column.freeze
+                    ? column.freeze
+                    : false;
+            },
+            handleFreezeSelect(column, colIndex) {
+                column.freeze = !column.freeze;
+                this.$forceUpdate();
+            },
+            handleClick(e, column = {}, row) {
+                if (
+                    !this.isString(column) &&
+                    {}.hasOwnProperty.call(column, "message") &&
+                    {}.hasOwnProperty.call(column, "confirmed")
+                ) {
+                    var value = prompt(
+                        column.message,
+                        this.isset(row[this.getKey(column)])
+                            ? row[this.getKey(column)]
+                            : ""
+                    );
+
+                    if (this.isset(value)) {
+                        row[this.getKey(column)] = value;
+                        column.confirmed(value, row);
+                    }
+                }
+            },
+            handleSearchClick() {
+                this.$refs.searchForm.submit();
+            },
+            handleSelectChange(e, row, column) {
+                if (
+                    !this.isString(column) &&
+                    {}.hasOwnProperty.call(column, "change")
+                ) {
+                    column.change(e, row, column);
+                }
+            },
+            handlePaginationClick(e, page) {
+                var currentPage = this.paginationClick(
+                    e,
+                    page,
+                    {
+                        keyword: this.isset(this.searchedKeyword)
+                            ? this.searchedKeyword
+                            : this.keyword,
+                        sortedColumn: this.isset(this.sortedColumn)
+                            ? this.sortedColumn
+                            : this.sortedColumn,
+                        asc: this.asc,
+                    },
+                    this
+                );
+
+                if (this.isset(currentPage)) {
+                    this.currentPage = currentPage;
+                }
+            },
+            handleClearSearch() {
+                this.searching = false;
+                this.keyword = null;
+                this.currentPage = 1;
+                this.isSearching = false;
+                if (!this.realTime) {
+                    this.searchedKeywordModel = null;
+                    this.clearSearch();
+                }
+            },
+            handleSearchTyping: _.debounce(function (e) {
+                var keyword = this.searchCallback(e, this);
+
+                if (this.isset(keyword) === false) {
+                    this.isSearching = true;
+                    return;
+                }
+                if (keyword !== "") {
+                    this.keyword = keyword;
+                } else {
+                    this.handleClearSearch();
+                }
+                this.currentPage = 1;
+            }, 500),
+            handleInputChange(e, column, row) {
+                if (
+                    !this.isString(column) &&
+                    {}.hasOwnProperty.call(column, "change") &&
+                    e.target.readOnly === false
+                ) {
+                    column.change(e, row, column);
+                }
+            },
+            handleInputKeydown: _.debounce(async function (e, column, row) {
+                if (
+                    !this.isString(column) &&
+                    {}.hasOwnProperty.call(column, "keydown") &&
+                    e.target.readOnly === false &&
+                    e.location === 0
+                ) {
+                    await column.keydown(e, row, column);
+                }
+            }, 500),
+            handleInputKeyup: _.debounce(async function (e, column, row) {
+                if (
+                    !this.isString(column) &&
+                    {}.hasOwnProperty.call(column, "keyup") &&
+                    e.target.readOnly === false &&
+                    e.location === 0
+                ) {
+                    await column.keyup(e, row, column);
+                }
+            }, 500),
+            handleInput: _.debounce(async function (e, column, row) {
+                if (
+                    !this.isString(column) &&
+                    {}.hasOwnProperty.call(column, "input") &&
+                    e.target.readOnly === false
+                ) {
+                    await column.input(e, row, column);
+                }
+            }, 500),
+            handleInputBlur(e) {
+                e.target.readOnly = true;
+            },
+            handleInputDoubleClick(e) {
+                this.oldInputValue = e.target.value;
+                e.target.readOnly = false;
+            },
+            handleRowSelect(e) {
+                if (!e.target.checked) {
+                    this.checkAll = false;
+                }
+            },
+            handleChangeAll(e) {
+                this.checkAll = e.target.checked;
+
+                for (let i = 0; i < this.data.length; i++) {
+                    this.data[i].checked = this.checkAll;
+                }
+            },
+            handleColumnSort(key) {
+                this.$emit(
+                    "sortClick",
+                    key,
+                    key === this.currentColumn ? !this.asc : true
+                );
+
+                if (key === this.currentColumn) {
+                    this.asc = !this.asc;
+                } else {
+                    this.asc = true;
+                }
+
+                this.currentColumn = key;
+            },
+            rows() {
+                if (this.showAll) {
+                    return this.data;
+                }
+
+                var data = this.data.filter((row) => {
+                    if (this.keyword !== null) {
+                        var found = false;
+                        // get searchable columns
+                        for (let i = 0; i < this.columns.length; i++) {
+                            if (this.isSearchable(this.columns[i])) {
+                                if (this.search(row[this.columns[i].key])) {
+                                    found = true;
+                                }
+                            }
+                        }
+                        return found;
+                    }
+                    return true;
+                });
+
+                if (this.sortedColumn !== null && this.realTime) {
+                    var sortKey = this.sortedColumn;
+
+                    this.columns.find((column) => {
+                        if (
+                            column.key === sortKey &&
+                            column.sortable &&
+                            this.isset(column.sortKey)
+                        ) {
+                            sortKey = column.sortKey;
+                            return true;
+                        }
+                        return false;
+                    });
+
+                    // sort rows by column
+                    data.sort((a, b) => {
+                        if (!isNaN(a[sortKey]) && !isNaN(b[sortKey])) {
+                            if (a[sortKey] < b[sortKey]) {
+                                return this.asc ? -1 : 1;
+                            }
+                            if (a[sortKey] > b[sortKey]) {
+                                return this.asc ? 1 : -1;
+                            }
+                        } else if (
+                            moment(a[sortKey]).isValid() &&
+                            moment(b[sortKey]).isValid()
+                        ) {
+                            if (moment(a[sortKey]) - moment(b[sortKey]) > 0) {
+                                return this.asc ? -1 : 1;
+                            }
+                            if (moment(a[sortKey]) - moment(b[sortKey]) < 0) {
+                                return this.asc ? 1 : -1;
+                            }
+                        } else {
+                            if (a[sortKey] < b[sortKey]) {
+                                return this.asc ? -1 : 1;
+                            }
+                            if (a[sortKey] > b[sortKey]) {
+                                return this.asc ? 1 : -1;
+                            }
+                        }
+
+                        return 0;
+                    });
+                }
+
+                var start = (this.currentPage - 1) * this.limit;
+                var end = start + this.limit;
+
+                if (this.keyword === null) {
+                    this.totalRows =
+                        this.totalTableRows > 0
+                            ? this.totalTableRows
+                            : this.data.length;
+                    this.totalPages = Math.ceil(this.totalRows / this.limit);
+                } else {
+                    this.totalRows = data.length;
+                    this.totalPages = Math.ceil(this.totalRows / this.limit);
+                }
+
+                if (data.length < start) {
+                    return data;
+                } else {
+                    return data.slice(start, end);
+                }
+            },
+        },
+    };
 </script>
 
 <style lang="scss" scoped>
@@ -973,17 +1001,17 @@ export default {
             //     padding: 0;
             //     top: 0;
             // }
-            .column-options{
+            .column-options {
                 position: absolute;
                 left: 0;
                 padding: 0;
                 // background-color: white;
                 // border: 1px solid #dee2e6;
                 display: none;
-                box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+                box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
             }
-            &:hover{
-                .column-options{
+            &:hover {
+                .column-options {
                     display: block;
                 }
             }
@@ -1096,12 +1124,13 @@ table {
             span {
                 padding: 0.5em;
                 font-weight: normal;
-                i{
+                display: block;
+                i {
                     color: #aaa;
                 }
             }
-            .btn{
-                i{
+            .btn {
+                i {
                     color: inherit;
                 }
             }
