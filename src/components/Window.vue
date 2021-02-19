@@ -143,37 +143,35 @@
                 // }
             },
             onDrag(e) {
-                setTimeout(() => {
-                    let { window } = this.$refs;
+                let { window } = this.$refs;
 
-                    let shiftX = e.clientX - window.offsetLeft;
-                    let shiftY = e.clientY - window.offsetTop;
-                    this.isGrabbed = true;
+                let shiftX = e.screenX - window.getBoundingClientRect().left;
+                let shiftY = e.screenY - window.getBoundingClientRect().top;
+                this.isGrabbed = true;
 
-                    // centers the ball at (pageX, pageY) coordinates
-                    function moveAt(pageX, pageY) {
-                        window.style.left = pageX - shiftX + "px";
-                        window.style.top = pageY - shiftY + "px";
-                    }
-                    function onMouseMove(e) {
-                        moveAt(e.pageX, e.pageY);
-                    }
+                // centers the ball at (pageX, pageY) coordinates
+                function moveAt(pageX, pageY) {
+                    window.style.left = pageX - shiftX + "px";
+                    window.style.top = pageY - shiftY + "px";
+                }
+                function onMouseMove(e) {
+                    moveAt(e.screenX, e.screenY);
+                }
 
-                    // moveAt(e.pageX, e.pageY);
+                // moveAt(e.pageX, e.pageY);
 
-                    document.addEventListener("mousemove", onMouseMove);
+                document.addEventListener("mousemove", onMouseMove);
 
-                    document.onmouseup = () => {
-                        document.removeEventListener("mousemove", onMouseMove);
-                        window.onmouseup = null;
-                        this.isGrabbed = false;
-                    };
-                    document.oncontextmenu = () => {
-                        document.removeEventListener("mousemove", onMouseMove);
-                        window.onmouseup = null;
-                        this.isGrabbed = false;
-                    };
-                }, 10);
+                document.onmouseup = (e) => {
+                    document.removeEventListener("mousemove", onMouseMove);
+                    window.onmouseup = null;
+                    this.isGrabbed = false;
+                };
+                document.oncontextmenu = () => {
+                    document.removeEventListener("mousemove", onMouseMove);
+                    window.onmouseup = null;
+                    this.isGrabbed = false;
+                };
             },
             onDragStart(e) {
                 e.preventDefault();
