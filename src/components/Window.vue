@@ -144,10 +144,10 @@
             },
             onDrag(e) {
                 let { window } = this.$refs;
+                window.classList.add('grab');
 
                 let shiftX = e.screenX - window.getBoundingClientRect().left;
                 let shiftY = e.screenY - window.getBoundingClientRect().top;
-                this.isGrabbed = true;
 
                 // centers the ball at (pageX, pageY) coordinates
                 function moveAt(pageX, pageY) {
@@ -165,12 +165,12 @@
                 document.onmouseup = (e) => {
                     document.removeEventListener("mousemove", onMouseMove);
                     window.onmouseup = null;
-                    this.isGrabbed = false;
+                    window.classList.remove('grab');
                 };
                 document.oncontextmenu = () => {
                     document.removeEventListener("mousemove", onMouseMove);
                     window.onmouseup = null;
-                    this.isGrabbed = false;
+                    window.classList.remove('grab');
                 };
             },
             onDragStart(e) {
