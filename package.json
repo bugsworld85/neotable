@@ -1,6 +1,6 @@
 {
     "name": "neotable",
-    "version": "0.5.2",
+    "version": "0.5.3",
     "private": false,
     "scripts": {
         "serve": "vue-cli-service serve",
@@ -9,7 +9,7 @@
         "build-dist": "vue-cli-service build --target lib --name neo-table ./src/index.js"
     },
     "dependencies": {
-        "lodash": "^4.17.20",
+        "lodash": "^4.17.21",
         "moment": "^2.29.1"
     },
     "devDependencies": {
@@ -21,7 +21,7 @@
         "sass-loader": "^11.0.1",
         "vue": "^2.6.12",
         "vue-template-compiler": "^2.6.12",
-        "webpack": "^5.21.2"
+        "webpack": "^5.23.0"
     },
     "config": {
         "resolve": {
